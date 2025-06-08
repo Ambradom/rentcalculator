@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.rentcalculator.controller.MainController"
+      spacing="10" padding="10">
+
+    <Label text="Калькулятор арендной доходности" style="-fx-font-weight: bold;">
+        <font>
+            <Font size="18"/>
+        </font>
+    </Label>
+
+    <GridPane hgap="10" vgap="10">
+        <Label text="Район:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="regionField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Цена объекта:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="priceField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <Label text="Арендная плата:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="rentField" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Налоги:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="taxesField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Стоимость ремонта:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <TextField fx:id="repairCostField" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="10">
+        <Button text="Рассчитать" onAction="#handleCalculate"/>
+        <Button text="Добавить в список" onAction="#handleAdd"/>
+        <Button text="Загрузить с ЦИАН" onAction="#handleLoadFromCian"/>
+    </HBox>
+
+    <TableView fx:id="tableView">
+        <columns>
+            <TableColumn text="Район" fx:id="regionCol"/>
+            <TableColumn text="Цена" fx:id="priceCol"/>
+            <TableColumn text="Аренда" fx:id="rentCol"/>
+            <TableColumn text="ROI (%)" fx:id="roiCol"/>
+            <TableColumn text="Окупаемость (мес.)" fx:id="paybackCol"/>
+        </columns>
+    </TableView>
+
+</VBox>
