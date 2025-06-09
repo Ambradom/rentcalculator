@@ -35,16 +35,32 @@ public class RentalProperty implements Serializable {
     public void setRegion(String region) { this.region = region; }
 
     public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    public void setPrice(double price) {
+        this.price = price;
+        calculateROI();
+        calculatePayback();
+    }
 
     public double getRent() { return rent; }
-    public void setRent(double rent) { this.rent = rent; }
+    public void setRent(double rent) {
+        this.rent = rent;
+        calculateROI();
+        calculatePayback();
+    }
 
     public double getTaxes() { return taxes; }
-    public void setTaxes(double taxes) { this.taxes = taxes; }
+    public void setTaxes(double taxes) {
+        this.taxes = taxes;
+        calculateROI();
+        calculatePayback();
+    }
 
     public double getRepairCost() { return repairCost; }
-    public void setRepairCost(double repairCost) { this.repairCost = repairCost; }
+    public void setRepairCost(double repairCost) {
+        this.repairCost = repairCost;
+        calculateROI();
+        calculatePayback();
+    }
 
     public double getRoi() { return roi; }
     public void setRoi(double roi) { this.roi = roi; }
@@ -52,19 +68,31 @@ public class RentalProperty implements Serializable {
     public int getPaybackPeriod() { return paybackPeriod; }
     public void setPaybackPeriod(int paybackPeriod) { this.paybackPeriod = paybackPeriod; }
 
-    private void calculateROI() {
-        this.roi = ((rent - taxes) / price) * 100;
+    public void calculateROI() {
+        if (price != 0) {
+            this.roi = ((rent - taxes) / price) * 100;
+        } else {
+            this.roi = 0;
+        }
     }
 
-    private void calculatePayback() {
-        this.paybackPeriod = (int) ((price + repairCost) / (rent - taxes));
+    public void calculatePayback() {
+        if (rent > taxes) {
+            this.paybackPeriod = (int) ((price + repairCost) / (rent - taxes));
+        } else {
+            this.paybackPeriod = Integer.MAX_VALUE;
+        }
     }
 
     @Override
     public String toString() {
         return "RentalProperty{" +
-                "region='" + region + '\'' +
+                "id=" + id +
+                ", region='" + region + '\'' +
                 ", price=" + price +
+                ", rent=" + rent +
+                ", taxes=" + taxes +
+                ", repairCost=" + repairCost +
                 ", roi=" + roi +
                 ", paybackPeriod=" + paybackPeriod +
                 '}';

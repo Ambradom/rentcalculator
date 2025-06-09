@@ -1,7 +1,6 @@
 package org.example.rentcalculator.dao;
 
 import org.example.rentcalculator.model.RentalProperty;
-
 import java.util.List;
 
 public interface RentalDAO {

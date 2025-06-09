@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.paint.Color?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.rentcalculator.controller.MainController"
+      spacing="15" style="-fx-background-color: #f5f5f5;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Заголовок -->
+    <Label text="Калькулятор арендной доходности" style="
+        -fx-font-size: 24px;
+        -fx-font-weight: bold;
+        -fx-text-fill: #2c3e50;
+        -fx-alignment: center;
+    "/>
+
+    <!-- Поля ввода -->
+    <GridPane hgap="10" vgap="10" style="-fx-padding: 10;">
+        <Label text="Район:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="regionField" GridPane.rowIndex="0" GridPane.columnIndex="1" promptText="Например: Москва"/>
+
+        <Label text="Цена объекта:" GridPane.rowIndex="1" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="priceField" GridPane.rowIndex="1" GridPane.columnIndex="1" promptText="Введите цену"/>
+
+        <Label text="Арендная плата:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="rentField" GridPane.rowIndex="2" GridPane.columnIndex="1" promptText="Ежемесячная аренда"/>
+
+        <Label text="Налоги:" GridPane.rowIndex="3" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="taxesField" GridPane.rowIndex="3" GridPane.columnIndex="1" promptText="Месячные налоги"/>
+
+        <Label text="Стоимость ремонта:" GridPane.rowIndex="4" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+        <TextField fx:id="repairCostField" GridPane.rowIndex="4" GridPane.columnIndex="1" promptText="Сумма ремонта"/>
+    </GridPane>
+
+    <!-- Кнопки -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Рассчитать" onAction="#handleCalculate" style="
+            -fx-background-color: #3498db;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+        <Button text="Добавить в список" onAction="#handleAdd" style="
+            -fx-background-color: #2ecc71;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+        <Button text="Загрузить из БД" onAction="#handleLoadFromDB" style="
+            -fx-background-color: #f39c12;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+        <Button text="Редактировать выделенный" onAction="#handleEdit"
+                style="
+            -fx-background-color: #8A2BE2;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+        <Button text="Удалить" onAction="#handleDelete" style="
+            -fx-background-color: #e74c3c;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+    </HBox>
+
+    <!-- Поле ввода URL и кнопка загрузки с ЦИАН -->
+    <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10;">
+        <TextField fx:id="cianUrlField" promptText="https://cian.ru/...  или путь к JSON" style="-fx-pref-width: 600;"/>
+        <Button text="Загрузить с ЦИАН" onAction="#handleLoadFromCian" style="
+            -fx-background-color: #8e44ad;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-padding: 10 20;
+            -fx-cursor: hand;
+        "/>
+    </HBox>
+
+    <!-- Таблица -->
+    <TableView fx:id="tableView" style="
+        -fx-table-cell-border-color: #bdc3c7;
+        -fx-table-header-border-color: #2c3e50;
+    ">
+        <columns>
+            <TableColumn text="Район" fx:id="regionCol" style="-fx-font-weight: bold;"/>
+            <TableColumn text="Цена" fx:id="priceCol"/>
+            <TableColumn text="Аренда" fx:id="rentCol"/>
+            <TableColumn text="ROI (%)" fx:id="roiCol"/>
+            <TableColumn text="Окупаемость (мес.)" fx:id="paybackCol"/>
+        </columns>
+    </TableView>
+
+</VBox>
