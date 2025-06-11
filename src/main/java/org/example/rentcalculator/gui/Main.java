@@ -12,7 +12,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main-view.fxml"));
         primaryStage.setTitle("Калькулятор арендной доходности");
-        primaryStage.setScene(new Scene(root, 1000, 800));
+        primaryStage.setScene(new Scene(root, 800, 800));
         primaryStage.show();
     }
 

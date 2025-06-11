@@ -23,17 +23,15 @@ public class CianApiDAO {
         try {
             if (url == null || url.isEmpty()) {
                 System.out.println("URL пуст — используем тестовые данные");
-                return loadFromTestFile();
+                return null; // ← явно возвращаем null
             } else if (url.startsWith("http")) {
-                System.out.println("Загрузка с реального URL: " + url);
                 return loadFromUrl(url);
             } else {
-                System.out.println("Попытка загрузки из локального файла: " + url);
                 return loadFromFile(url);
             }
         } catch (Exception e) {
             System.err.println("Ошибка при загрузке данных: " + e.getMessage());
-            return loadFromTestFile(); // fallback
+            return null;
         }
     }
 

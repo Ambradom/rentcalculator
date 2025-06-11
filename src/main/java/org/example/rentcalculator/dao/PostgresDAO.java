@@ -29,7 +29,7 @@ public class PostgresDAO implements RentalDAO {
     /**
      * Создаёт таблицу 'properties', если она не существует
      */
-    private void createTableIfNotExists() throws SQLException {
+    public void createTableIfNotExists() throws SQLException {
         String sql = """
             CREATE TABLE IF NOT EXISTS properties (
                 id SERIAL PRIMARY KEY,

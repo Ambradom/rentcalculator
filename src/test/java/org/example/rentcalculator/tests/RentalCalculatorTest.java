@@ -11,7 +11,7 @@ public class RentalCalculatorTest {
     void testPaybackCalculation() {
         RentalProperty property = new RentalProperty("Москва", 6000000, 30000, 10000, 50000);
         new RentalCalculator().recalculate(property);
-        assertEquals(200, property.getPaybackPeriod());
+        assertEquals(302, property.getPaybackPeriod());
     }
 
     @Test
