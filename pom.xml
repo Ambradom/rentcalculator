@@ -32,6 +32,13 @@
             <version>42.6.0</version>
         </dependency>
 
+        <!-- Jsoup: HTML parser -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
         <!-- Jackson JSON (для ЦИАН) -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -52,6 +59,11 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>rent-calculator</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

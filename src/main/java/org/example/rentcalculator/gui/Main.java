@@ -10,9 +10,11 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main-view.fxml"));
-        primaryStage.setTitle("Калькулятор арендной доходности");
-        primaryStage.setScene(new Scene(root, 800, 800));
+        // Сначала показываем окно авторизации
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
+        primaryStage.setTitle("Авторизация");
+        primaryStage.setScene(new Scene(root, 600, 300));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

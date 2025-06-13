@@ -13,18 +13,16 @@ import java.nio.file.Paths;
 
 public class CianApiDAO {
 
-    // Путь к тестовому файлу
     private static final String TEST_JSON_PATH = "src/test-cian.json";
 
-    /**
-     * Загружает данные с ЦИАН или использует тестовый JSON как резерв
-     */
     public RentalProperty fetchFromCian(String url) throws IOException {
+        if (url == null || url.isBlank()) {
+            System.out.println("URL пуст — используем тестовые данные");
+            return loadFromTestFile();
+        }
+
         try {
-            if (url == null || url.isEmpty()) {
-                System.out.println("URL пуст — используем тестовые данные");
-                return null; // ← явно возвращаем null
-            } else if (url.startsWith("http")) {
+            if (url.startsWith("http")) {
                 return loadFromUrl(url);
             } else {
                 return loadFromFile(url);
@@ -35,69 +33,85 @@ public class CianApiDAO {
         }
     }
 
-    /**
-     * Парсинг JSON по URL
-     */
     private RentalProperty loadFromUrl(String urlStr) throws Exception {
-        URL obj = new URL(urlStr);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        URL url = new URL(urlStr);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuilder response = new StringBuilder();
-        String inputLine;
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                response.append(line);
+            }
         }
-        in.close();
+
+        // Извлечение JSON из HTML (упрощённо)
+        String html = response.toString();
+        int start = html.indexOf("window._cianConfig=");
+        if (start == -1) {
+            throw new IOException("Не найден JSON в ответе");
+        }
+
+        int end = html.indexOf("</script>", start);
+        String jsonPart = html.substring(start + 18, end).trim(); // 18 — длина 'window._cianConfig='
+        if (jsonPart.endsWith(";")) {
+            jsonPart = jsonPart.substring(0, jsonPart.length() - 1);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(response.toString());
+        JsonNode root = mapper.readTree(jsonPart);
 
-        return parseJson(jsonNode);
+        return parseJson(root);
     }
 
-    /**
-     * Чтение JSON из файла
-     */
     private RentalProperty loadFromFile(String filePath) throws IOException {
         Path path = Paths.get(filePath);
-
         if (!Files.exists(path)) {
-            System.err.println("Файл не найден: " + path.toAbsolutePath());
-            return null;
-        }
-
-        if (Files.isDirectory(path)) {
-            System.err.println();
-            return null;
+            throw new FileNotFoundException("Файл не найден: " + path.toAbsolutePath());
         }
 
         byte[] jsonData = Files.readAllBytes(path);
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(jsonData);
+        JsonNode root = mapper.readTree(jsonData);
 
-        return parseJson(jsonNode);
+        return parseJson(root);
     }
-    /**
-     * Используется для тестовых данных
-     */
+
     private RentalProperty loadFromTestFile() throws IOException {
         return loadFromFile(TEST_JSON_PATH);
     }
 
-    /**
-     * Безопасный парсинг JSON
-     */
     private RentalProperty parseJson(JsonNode jsonNode) {
         try {
-            String region = jsonNode.get("location").get("district").asText();
-            double price = jsonNode.get("price").get("value").asDouble();
-            double rent = jsonNode.get("rent").get("avg").asDouble();
+            String region = "Неизвестно";
+            if (jsonNode.has("location")) {
+                JsonNode locationNode = jsonNode.get("location");
+                if (locationNode.has("district")) {
+                    region = locationNode.get("district").asText();
+                }
+            }
 
+            double price = 0;
+            if (jsonNode.has("price")) {
+                JsonNode priceNode = jsonNode.get("price");
+                if (priceNode.has("value")) {
+                    price = priceNode.get("value").asDouble();
+                }
+            }
+
+            double rent = 0;
+            if (jsonNode.has("rent")) {
+                JsonNode rentNode = jsonNode.get("rent");
+                if (rentNode.has("avg")) {
+                    rent = rentNode.get("avg").asDouble();
+                }
+            }
+
+            // Создаем объект недвижимости
             return new RentalProperty(region, price, rent, 10_000, 50_000);
+
         } catch (Exception e) {
             System.err.println("Неверный формат JSON: " + e.getMessage());
             return null;

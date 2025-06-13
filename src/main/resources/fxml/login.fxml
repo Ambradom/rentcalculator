@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.rentcalculator.controller.LoginController"
+      spacing="20"
+      style="-fx-background-color: #f5f5f5;">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Заголовок -->
+    <Label text="Калькулятор арендной доходности" style="
+        -fx-font-size: 24px;
+        -fx-font-weight: bold;
+        -fx-text-fill: #2c3e50;
+        -fx-alignment: center;
+    "/>
+
+    <!-- Подзаголовок -->
+    <Label text="Вход / Регистрация" style="
+        -fx-font-size: 18px;
+        -fx-font-weight: bold;
+        -fx-alignment: center;
+    "/>
+
+    <!-- Форма входа -->
+    <GridPane fx:id="gridPane" hgap="10" vgap="10">
+        <Label text="Логин:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="loginField" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Пароль:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <PasswordField fx:id="passwordField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+        <!-- Поле подтверждения пароля (по умолчанию скрыто) -->
+        <PasswordField fx:id="confirmPasswordField" visible="false" managed="false" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+    </GridPane>
+
+    <!-- Кнопки -->
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Войти" onAction="#handleLogin" style="
+            -fx-background-color: #3498db;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-pref-width: 120;
+            -fx-cursor: hand;
+            -fx-background-radius: 6;
+        "/>
+        <Button text="Зарегистрироваться" onAction="#handleRegister" style="
+            -fx-background-color: #2ecc71;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-pref-width: 140;
+            -fx-cursor: hand;
+            -fx-background-radius: 6;
+        "/>
+        <!-- Кнопка "Подтвердить регистрацию" (по умолчанию скрыта) -->
+        <Button text="Подтвердить регистрацию" fx:id="confirmRegistrationButton"
+                visible="false" managed="false"
+                onAction="#handleConfirmRegistration" style="
+            -fx-background-color: #e67e22;
+            -fx-text-fill: white;
+            -fx-font-weight: bold;
+            -fx-pref-width: 140;
+            -fx-cursor: hand;
+            -fx-background-radius: 6;
+        "/>
+    </HBox>
+</VBox>

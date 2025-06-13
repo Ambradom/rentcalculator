@@ -13,10 +13,11 @@ public class PostgresDAO implements RentalDAO {
 
     public PostgresDAO() {
         try {
-            // Подключаемся к БД
+            // Подключаемся к базе данных
             this.connection = DriverManager.getConnection(
                     "jdbc:postgresql://localhost:5432/rent_calculator",
-                    "postgres", "213456");
+                    "postgres", "213456"
+            );
 
             // Создаём таблицу, если не существует
             createTableIfNotExists();
@@ -55,11 +56,15 @@ public class PostgresDAO implements RentalDAO {
     @Override
     public void save(RentalProperty property) {
         if (connection == null) {
-            System.err.println("Не удалось сохранить объект: соединение с БД не установлено");
+            System.err.println("Не удалось сохранить объект — соединение с БД не установлено");
             return;
         }
 
-        String sql = "INSERT INTO properties(region, price, rent, taxes, repair_cost, roi, payback_period) VALUES(?,?,?,?,?,?,?)";
+        String sql = """
+            INSERT INTO properties(region, price, rent, taxes, repair_cost, roi, payback_period)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """;
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, property.getRegion());
             pstmt.setDouble(2, property.getPrice());
@@ -68,6 +73,7 @@ public class PostgresDAO implements RentalDAO {
             pstmt.setDouble(5, property.getRepairCost());
             pstmt.setDouble(6, property.getRoi());
             pstmt.setInt(7, property.getPaybackPeriod());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Ошибка при сохранении объекта в БД: " + e.getMessage());
@@ -100,6 +106,7 @@ public class PostgresDAO implements RentalDAO {
                 p.setRepairCost(rs.getDouble("repair_cost"));
                 p.setRoi(rs.getDouble("roi"));
                 p.setPaybackPeriod(rs.getInt("payback_period"));
+
                 list.add(p);
             }
 
@@ -111,7 +118,7 @@ public class PostgresDAO implements RentalDAO {
     }
 
     /**
-     * Обновляет данные о недвижимости в БД
+     * Обновляет существующую запись в БД
      */
     @Override
     public void update(RentalProperty property) {
@@ -120,7 +127,12 @@ public class PostgresDAO implements RentalDAO {
             return;
         }
 
-        String sql = "UPDATE properties SET region=?, price=?, rent=?, taxes=?, repair_cost=?, roi=?, payback_period=? WHERE id=?";
+        String sql = """
+            UPDATE properties
+            SET region = ?, price = ?, rent = ?, taxes = ?, repair_cost = ?, roi = ?, payback_period = ?
+            WHERE id = ?
+        """;
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, property.getRegion());
             pstmt.setDouble(2, property.getPrice());
@@ -130,6 +142,7 @@ public class PostgresDAO implements RentalDAO {
             pstmt.setDouble(6, property.getRoi());
             pstmt.setInt(7, property.getPaybackPeriod());
             pstmt.setInt(8, property.getId());
+
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Ошибка при обновлении записи: " + e.getMessage());
@@ -156,6 +169,47 @@ public class PostgresDAO implements RentalDAO {
     }
 
     /**
+     * Проверяет, существует ли пользователь с таким логином
+     */
+    public boolean userExists(String login) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM users WHERE login = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Регистрация нового пользователя
+     */
+    public void registerUser(String login, String password) throws SQLException {
+        String sql = "INSERT INTO users(login, password) VALUES (?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            pstmt.setString(2, password); // В реальном проекте используй хэширование паролей
+            pstmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Аутентификация пользователя
+     */
+    public boolean authenticateUser(String login, String password) throws SQLException {
+        String sql = "SELECT * FROM users WHERE login = ? AND password = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, login);
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // Если есть результат → авторизация успешна
+        }
+    }
+
+    /**
      * Возвращает текущее соединение с БД
      */
     public Connection getConnection() {
@@ -163,7 +217,7 @@ public class PostgresDAO implements RentalDAO {
     }
 
     /**
-     * Закрывает соединение
+     * Закрывает соединение с БД
      */
     public void closeConnection() {
         try {
