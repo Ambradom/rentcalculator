@@ -13,9 +13,12 @@ class CianApiDAOTest {
     private final CianApiDAO cianDao = new CianApiDAO();
 
     @Test
-    void testEmptyUrlReturnsNull() throws IOException {
-        RentalProperty result = cianDao.fetchFromCian("");
-        assertNull(result);
+    void testEmptyUrlReturnsTestData() throws IOException {
+        RentalProperty property = cianDao.fetchFromCian("");
+        assertNotNull(property);
+        assertEquals("Москва", property.getRegion());
+        assertEquals(6_000_000, property.getPrice(), 0.01);
+        assertEquals(30_000, property.getRent(), 0.01);
     }
 
     @Test

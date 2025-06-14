@@ -3,6 +3,7 @@ module org.example.rentcalculator {
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
     requires java.sql;
+    requires org.jsoup;
 
     opens org.example.rentcalculator.controller to javafx.fxml;
 

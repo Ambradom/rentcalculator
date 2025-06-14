@@ -64,8 +64,10 @@ class PostgresDAOTest {
         property.calculatePayback();
 
         dao.save(property); // Сохраняем
-        int id = property.getId(); // Получаем ID из БД
-        assertNotNull(id);
+
+        // Теперь получаем ID из БД
+        int id = property.getId();
+        assertTrue(id > 0, "ID должен быть положительным после сохранения");
 
         // WHEN
         property.setRegion("Обновлённый район");
@@ -78,22 +80,21 @@ class PostgresDAOTest {
 
         dao.update(property); // Обновляем в БД
 
-        // Загружаем обновлённые данные из БД
+        // THEN
         List<RentalProperty> updatedList = dao.getAll();
         RentalProperty updatedProp = updatedList.stream()
                 .filter(p -> p.getId() == id)
                 .findFirst()
                 .orElse(null);
 
-        // THEN
         assertNotNull(updatedProp);
         assertEquals("Обновлённый район", updatedProp.getRegion());
         assertEquals(6_000_000, updatedProp.getPrice(), 0.01);
         assertEquals(30_000, updatedProp.getRent(), 0.01);
         assertEquals(10_000, updatedProp.getTaxes(), 0.01);
         assertEquals(50_000, updatedProp.getRepairCost(), 0.01);
-        assertEquals(0.333, updatedProp.getRoi(), 0.01); // ROI = ((30_000 - 10_000) / 6_000_000) * 100 = 0.333...
-        assertEquals(302, updatedProp.getPaybackPeriod());  // (6_000_000 + 50_000) / (30_000 - 10_000) = 302.5
+        assertEquals(0.333, updatedProp.getRoi(), 0.01);
+        assertEquals(302, updatedProp.getPaybackPeriod());
     }
 
     @Test

@@ -59,13 +59,11 @@ public class PostgresDAO implements RentalDAO {
             System.err.println("Не удалось сохранить объект — соединение с БД не установлено");
             return;
         }
-
         String sql = """
-            INSERT INTO properties(region, price, rent, taxes, repair_cost, roi, payback_period)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """;
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        INSERT INTO properties(region, price, rent, taxes, repair_cost, roi, payback_period)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    """;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, property.getRegion());
             pstmt.setDouble(2, property.getPrice());
             pstmt.setDouble(3, property.getRent());
@@ -74,7 +72,17 @@ public class PostgresDAO implements RentalDAO {
             pstmt.setDouble(6, property.getRoi());
             pstmt.setInt(7, property.getPaybackPeriod());
 
-            pstmt.executeUpdate();
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        property.setId(rs.getInt(1)); // Устанавливаем ID из БД
+                        System.out.println("Объект сохранён с ID: " + property.getId());
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             System.err.println("Ошибка при сохранении объекта в БД: " + e.getMessage());
         }
